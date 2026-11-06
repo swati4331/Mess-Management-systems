@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Booking Summary</title>
+
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    h2 {
+      color: #22c55e;
+      margin: 20px;
+    }
+
+    table {
+      width: 90%;
+      margin: auto;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #1e293b;
+      color: white;
+      padding: 10px;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .total-box {
+      margin-top: 20px;
+      font-size: 22px;
+      color: #22c55e;
+      font-weight: bold;
+    }
+
+    .no-data {
+      margin-top: 30px;
+      color: #f87171;
+      font-size: 18px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #ef4444;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>📋 Booking Summary</h2>
+
+<div id="summaryBox"></div>
+<div class="total-box" id="total"></div>
+
+<script>
+
+let user = "user1";
+let data = JSON.parse(localStorage.getItem("bookings")) || {};
+
+let html = "";
+let grandTotal = 0;
+
+if (data[user] && Object.keys(data[user]).length > 0) {
+
+  Object.keys(data[user]).forEach(date => {
+
+    html += `
+      <tr>
+        <th colspan="7" style="background:#22c55e;color:white;">
+          📅 ${date}
+        </th>
+      </tr>
+    `;
+
+    data[user][date].forEach(item => {
+
+      html += `
+        <tr>
+          <td>${item.day}</td>
+          <td>${item.type}</td>
+          <td>${item.meal}</td>
+          <td>${item.qty}</td>
+          <td>₹${item.price}</td>
+          <td>₹${item.total}</td>
+        </tr>
+      `;
+
+      grandTotal += item.total;
+    });
+  });
+
+  document.getElementById("summaryBox").innerHTML = `
+    <table>
+      <tr>
+        <th>Day</th>
+        <th>Type</th>
+        <th>Meal</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+      ${html}
+    </table>
+  `;
+
+  document.getElementById("total").innerText =
+    "💰 Grand Total: ₹" + grandTotal;
+
+} else {
+  document.getElementById("summaryBox").innerHTML =
+    "<div class='no-data'>No bookings found ❌</div>";
+}
+
+// CLEAR ALL DATA
+function clearData() {
+  localStorage.removeItem("bookings");
+  location.reload();
+}
+
+</script>
+
+</body>
+</html>

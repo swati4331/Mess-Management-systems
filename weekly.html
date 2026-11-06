@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weekly Menu</title>
+
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 20px;
+      color: #22c55e;
+    }
+
+    .menu-table {
+      width: 90%;
+      margin: auto;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .menu-table th {
+      background: #1e293b;
+      color: white;
+      padding: 12px;
+    }
+
+    .menu-table td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .menu-table tr:hover {
+      background: #f1f5f9;
+    }
+
+    .day {
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .book-btn {
+      margin-top: 5px;
+      padding: 5px 10px;
+      background: #22c55e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .booked {
+      background: gray;
+      cursor: not-allowed;
+    }
+
+    .view-btn {
+      margin: 20px;
+      padding: 10px 20px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .summary-table {
+      width: 60%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .summary-table th {
+      background: #1e293b;
+      color: white;
+      padding: 10px;
+    }
+
+    .summary-table td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .cancel-btn {
+      padding: 5px 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #summaryBox {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>📅 Weekly Mess Menu</h2>
+
+<table class="menu-table">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Breakfast</th>
+      <th>Lunch</th>
+      <th>Dinner</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    <tr>
+      <td class="day">Monday</td>
+      <td>Idli <br><button class="book-btn" onclick="bookMeal(this,'Monday','Breakfast')">Book</button></td>
+      <td>Biryani <br><button class="book-btn" onclick="bookMeal(this,'Monday','Lunch')">Book</button></td>
+      <td>Chapati <br><button class="book-btn" onclick="bookMeal(this,'Monday','Dinner')">Book</button></td>
+    </tr>
+
+    <tr>
+      <td class="day">Tuesday</td>
+      <td>Dosa <br><button class="book-btn" onclick="bookMeal(this,'Tuesday','Breakfast')">Book</button></td>
+      <td>Pulao <br><button class="book-btn" onclick="bookMeal(this,'Tuesday','Lunch')">Book</button></td>
+      <td>Meals <br><button class="book-btn" onclick="bookMeal(this,'Tuesday','Dinner')">Book</button></td>
+    </tr>
+
+    <tr>
+      <td class="day">Wednesday</td>
+      <td>Upma <br><button class="book-btn" onclick="bookMeal(this,'Wednesday','Breakfast')">Book</button></td>
+      <td>Fried Rice <br><button class="book-btn" onclick="bookMeal(this,'Wednesday','Lunch')">Book</button></td>
+      <td>Curd Rice <br><button class="book-btn" onclick="bookMeal(this,'Wednesday','Dinner')">Book</button></td>
+    </tr>
+
+    <tr>
+      <td class="day">Thursday</td>
+      <td>Poori <br><button class="book-btn" onclick="bookMeal(this,'Thursday','Breakfast')">Book</button></td>
+      <td>Veg Meal <br><button class="book-btn" onclick="bookMeal(this,'Thursday','Lunch')">Book</button></td>
+      <td>Chapati <br><button class="book-btn" onclick="bookMeal(this,'Thursday','Dinner')">Book</button></td>
+    </tr>
+
+    <tr>
+      <td class="day">Friday</td>
+      <td>Uttapam <br><button class="book-btn" onclick="bookMeal(this,'Friday','Breakfast')">Book</button></td>
+      <td>Meals <br><button class="book-btn" onclick="bookMeal(this,'Friday','Lunch')">Book</button></td>
+      <td>Pulao <br><button class="book-btn" onclick="bookMeal(this,'Friday','Dinner')">Book</button></td>
+    </tr>
+
+    <tr>
+      <td class="day">Saturday</td>
+      <td>Noodles <br><button class="book-btn" onclick="bookMeal(this,'Saturday','Breakfast')">Book</button></td>
+      <td>Biryani <br><button class="book-btn" onclick="bookMeal(this,'Saturday','Lunch')">Book</button></td>
+      <td>Chapati <br><button class="book-btn" onclick="bookMeal(this,'Saturday','Dinner')">Book</button></td>
+    </tr>
+
+    <tr>
+      <td class="day">Sunday</td>
+      <td>Special <br><button class="book-btn" onclick="bookMeal(this,'Sunday','Breakfast')">Book</button></td>
+      <td>Full Meals <br><button class="book-btn" onclick="bookMeal(this,'Sunday','Lunch')">Book</button></td>
+      <td>Light Dinner <br><button class="book-btn" onclick="bookMeal(this,'Sunday','Dinner')">Book</button></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<!-- SUMMARY TABLE -->
+<div id="summaryBox"></div>
+
+<script>
+let bookedMeals = JSON.parse(localStorage.getItem("bookedMeals")) || {};
+
+// apply booked state
+document.querySelectorAll(".book-btn").forEach(btn => {
+  const row = btn.parentElement.parentElement;
+  const day = row.children[0].innerText;
+  const meal = btn.parentElement.innerText.split("\n")[0].trim();
+
+  if (bookedMeals[day] && bookedMeals[day][meal]) {
+    btn.innerText = "Booked ✅";
+    btn.classList.add("booked");
+    btn.disabled = true;
+  }
+});
+
+// book function
+function bookMeal(button, day, meal) {
+  if (!bookedMeals[day]) bookedMeals[day] = {};
+
+  bookedMeals[day][meal] = true;
+
+  localStorage.setItem("bookedMeals", JSON.stringify(bookedMeals));
+
+  button.innerText = "Booked ✅";
+  button.classList.add("booked");
+  button.disabled = true;
+}
+
+// show summary table
+function toggleSummary() {
+  const box = document.getElementById("summaryBox");
+
+  let rows = "";
+
+  for (let day in bookedMeals) {
+    for (let meal in bookedMeals[day]) {
+      rows += `
+        <tr>
+          <td>${day}</td>
+          <td>${meal}</td>
+          <td>Booked ✅</td>
+          <td><button class="cancel-btn" onclick="cancelMeal('${day}','${meal}')">Cancel</button></td>
+        </tr>
+      `;
+    }
+  }
+
+  if (rows === "") {
+    box.innerHTML = "<p>No meals booked ❌</p>";
+  } else {
+    box.innerHTML = `
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Meal</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+
+// cancel
+function cancelMeal(day, meal) {
+  delete bookedMeals[day][meal];
+
+  if (Object.keys(bookedMeals[day]).length === 0) {
+    delete bookedMeals[day];
+  }
+
+  localStorage.setItem("bookedMeals", JSON.stringify(bookedMeals));
+
+  toggleSummary(); // refresh
+}
+</script>
+
+<button onclick="goToSummary()" class="view-btn">
+  View Booking Summary
+</button>
+
+<script>
+function goToSummary(){
+  window.location.href = "summary.html";
+}
+</script>
+
+</body>
+</html>
+

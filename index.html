@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mess Menu</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">🍴 MyMenu</div>
+
+  <ul class="nav-links">
+    <li class="active">Home</li>
+    <li>Features</li>
+    <li>Pricing</li>
+  </ul>
+
+  <div>
+    
+<div class="btn-group">
+  <a href="login.html">
+  <button class="login-btn" onclick="login()">Login</button>
+  </a>
+  <a href="register.html">
+    <button type="button" class="register-btn">Register</button>
+  </a>
+</div>
+  </div>
+
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Smart Mess Management</h1>
+    <p>Manage menu, students & payments easily</p>
+    <a href="login.html"><button class="btn-main">Get Started</button></a>
+  </div>
+</section>
+
+
+<script>
+function handleLogin(event) {
+    event.preventDefault(); // stop form refresh
+
+    // get values
+    const email = document.querySelector("input[type='email']").value;
+    const password = document.querySelector("input[type='password']").value;
+
+    // simple check (dummy login)
+    if(email && password){
+        alert("Login Successful ✅");
+
+        // redirect to dashboard
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Please enter details");
+    }
+}
+</script>
+
+
+</body>
+</html>
+

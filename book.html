@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Meals</title>
+
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    h2 { color: #22c55e; }
+
+    .top-box input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 10px;
+    }
+
+    .section-title {
+      width: 100%;
+      font-size: 20px;
+      color: #22c55e;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 160px;
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .card img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+    }
+
+    .card.selected {
+      border: 2px solid #22c55e;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .book-btn { background:#22c55e; color:white; }
+    .summary-btn { background:#3b82f6; color:white; }
+  </style>
+</head>
+
+<body>
+
+<h2>🍽️ Book Your Meal</h2>
+
+<div class="top-box">
+  <input type="date" id="date">
+  <input type="text" id="day" readonly>
+  <input type="number" id="qty" placeholder="Quantity">
+</div>
+
+<div id="menuBox"></div>
+
+<button class="book-btn" onclick="bookMeal()">Book Now</button>
+<button class="summary-btn" onclick="goSummary()">View Summary</button>
+
+<script>
+
+let selectedMeal = null;
+
+/* FOOD DB */
+const foodDB = {
+  Breakfast: [
+    { name:"Idli", img:"assets/images/idli.webp", price:30 },
+    { name:"Dosa", img:"assets/images/dosa.jpg", price:35 },
+    { name:"Upma", img:"assets/images/upma.jpg", price:30 },
+    { name:"Uttapam", img:"assets/images/uttapam.jpg", price:35 }
+  ],
+
+  Lunch: [
+    { name:"Biryani", img:"assets/images/biryani.jpg", price:70 },
+    { name:"Fried Rice", img:"assets/images/fried rice.webp", price:60 },
+    { name:"Veg Meal", img:"assets/images/veg meals.avif", price:60 },
+    { name:"Meals", img:"assets/images/roti meal.jpg", price:60 }
+  ],
+
+  Dinner: [
+    { name:"Chapati Dhaal", img:"assets/images/chapati dhaal.webp", price:50 },
+    { name:"Egg Rice", img:"assets/images/egg rice.webp", price:60 },
+    { name:"Roti", img:"assets/images/roti meal.jpg", price:50 },
+    { name:"Rice", img:"assets/images/rice.jpg", price:50 }
+  ]
+};
+
+/* DAY PLAN */
+const dayPlan = {
+  Monday:{Breakfast:["Idli"],Lunch:["Biryani"],Dinner:["Chapati Dhaal"]},
+  Tuesday:{Breakfast:["Dosa"],Lunch:["Fried Rice"],Dinner:["Egg Rice"]},
+  Wednesday:{Breakfast:["Upma"],Lunch:["Veg Meal"],Dinner:["Roti"]},
+  Thursday:{Breakfast:["Uttapam"],Lunch:["Meals"],Dinner:["Rice"]},
+  Friday:{Breakfast:["Idli"],Lunch:["Biryani"],Dinner:["Egg Rice"]},
+  Saturday:{Breakfast:["Dosa"],Lunch:["Veg Meal"],Dinner:["Roti"]},
+  Sunday:{Breakfast:["Upma"],Lunch:["Meals"],Dinner:["Rice"]}
+};
+
+document.getElementById("date").addEventListener("change", function () {
+  let d = new Date(this.value);
+  let days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  let dayName = days[d.getDay()];
+  document.getElementById("day").value = dayName;
+  renderMenu(dayName);
+});
+
+/* MENU */
+function renderMenu(day){
+  let box = document.getElementById("menuBox");
+  box.innerHTML = "";
+  selectedMeal = null;
+
+  let plan = dayPlan[day];
+  if(!plan) return;
+
+  Object.keys(plan).forEach(type => {
+
+    let title = document.createElement("div");
+    title.className = "section-title";
+    title.innerText = type;
+    box.appendChild(title);
+
+    let row = document.createElement("div");
+    row.className = "cards";
+
+    plan[type].forEach(name => {
+      let item = foodDB[type].find(f => f.name === name);
+      if(!item) return;
+
+      let card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${item.img}">
+        <p>${item.name}</p>
+      `;
+
+      card.onclick = () => {
+        document.querySelectorAll(".card").forEach(c=>c.classList.remove("selected"));
+        card.classList.add("selected");
+
+        selectedMeal = {
+          name:item.name,
+          type:type,
+          price:item.price
+        };
+      };
+
+      row.appendChild(card);
+    });
+
+    box.appendChild(row);
+  });
+}
+
+/* BOOK */
+function bookMeal(){
+  let date = document.getElementById("date").value;
+  let qty = document.getElementById("qty").value;
+
+  if(!date || !selectedMeal || !qty){
+    alert("Fill all fields");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("bookings")) || {};
+  let user = "user1";
+
+  if(!data[user]) data[user]={};
+  if(!data[user][date]) data[user][date]=[];
+
+  data[user][date].push({
+    day:document.getElementById("day").value,
+    type:selectedMeal.type,
+    meal:selectedMeal.name,
+    qty:qty,
+    price:selectedMeal.price,
+    total:selectedMeal.price*qty
+  });
+
+  localStorage.setItem("bookings", JSON.stringify(data));
+
+  alert("Booked ✅");
+}
+
+/* NAV */
+function goSummary(){
+  window.location.href="book-summary.html";
+}
+
+</script>
+
+</body>
+</html>

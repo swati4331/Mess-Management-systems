@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 🔐 PROTECTION -->
+<script>
+if(localStorage.getItem("isLoggedIn") !== "true"){
+    window.location.href = "login.html";
+}
+</script>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>🍽️ Mess</h2>
+        <ul>
+            <li><a href="dashboard.html">🏠 Dashboard</a></li>
+
+            <!-- ✅ FIXED LINK -->
+            <li><a href="weekly.html">📅 Weekly Menu</a></li>
+
+            <li><a href="book.html">📝 Book Meal</a></li>
+            <li><a href="payment.html">💰 Payments</a></li>
+            <li onclick="logout()">🚪 Logout</li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h2 id="welcome"></h2>
+        </div>
+
+        <!-- BREAKFAST -->
+        <h2>Breakfasts</h2>
+        <div class="cards">
+
+            <div class="card special">
+                <img src="assets/images/idli.webp">
+                <p>Idli</p>
+            </div>
+
+            <div class="card special">
+                <img src="assets/images/noodles.jpg">
+                <p>Noodles</p>
+            </div>
+
+            <div class="card special">
+                <img src="assets/images/dosa.jpg">
+                <p>Dosa</p>
+            </div>
+
+            <div class="card special">
+                <img src="assets/images/poori.webp">
+                <p>Poori</p>
+            </div>
+
+            <div class="card special">
+                <img src="assets/images/puliyogare.jpg">
+                <p>Puliyogare</p>
+            </div>
+
+            <div class="card special">
+                <img src="assets/images/upma.jpg">
+                <p>Upma</p>
+            </div>
+
+            <div class="card special">
+                <img src="assets/images/uttapam.jpg">
+                <p>Uttapam</p>
+            </div>
+        </div>
+
+        <!-- LUNCH -->
+        <h2>Lunch</h2>
+        <div class="cards">
+            <div class="card special"><img src="assets/images/biryani.jpg"><p>Biryani</p></div>
+            <div class="card special"><img src="assets/images/fried rice.webp"><p>Fried Rice</p></div>
+            <div class="card special"><img src="assets/images/chapati meals.jpg"><p>Chapati</p></div>
+            <div class="card special"><img src="assets/images/veg meals.avif"><p>Veg Meal</p></div>
+            <div class="card special"><img src="assets/images/pulao.jpg"><p>Pulao</p></div>
+            <div class="card special"><img src="assets/images/curd rice.webp"><p>Curd Rice</p></div>
+            <div class="card special"><img src="assets/images/roti meal.jpg"><p>Meals</p></div>
+        </div>
+
+        <!-- DINNER -->
+        <h2>Dinner</h2>
+        <div class="cards">
+            <div class="card special"><img src="assets/images/chapati dhaal.webp"><p>Chapati Dhaal</p></div>
+            <div class="card special"><img src="assets/images/egg rice.webp"><p>Egg Rice</p></div>
+            <div class="card special"><img src="assets/images/ragi mudde.jpg"><p>Ragi Mudde</p></div>
+            <div class="card special"><img src="assets/images/roti meal.jpg"><p>Roti</p></div>
+            <div class="card special"><img src="assets/images/eggburji.jpg"><p>Egg Burji</p></div>
+            <div class="card special"><img src="assets/images/veg meals.avif"><p>Veg Meals</p></div>
+            <div class="card special"><img src="assets/images/rice.jpg"><p>Rice</p></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+// Get stored username
+const username = localStorage.getItem("username");
+
+// Show welcome message
+document.getElementById("welcome").innerText =
+    "Welcome, " + username + " 👋";
+
+// Logout function
+function logout(){
+
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

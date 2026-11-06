@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Meal Payment Dashboard</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+            background:#eef2f7;
+            padding:30px;
+        }
+
+        .dashboard{
+            max-width:1100px;
+            margin:auto;
+        }
+
+        .top-box{
+            background:linear-gradient(135deg,#2e7d32,#43a047);
+            color:white;
+            padding:25px;
+            border-radius:15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            margin-bottom:25px;
+        }
+
+        .top-box h1{
+            font-size:30px;
+        }
+
+        .card-container{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+            gap:20px;
+        }
+
+        .card{
+            background:white;
+            padding:25px;
+            border-radius:15px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2{
+            color:#2e7d32;
+            margin-bottom:20px;
+        }
+
+        .meal-item{
+            display:flex;
+            justify-content:space-between;
+            margin:12px 0;
+            padding-bottom:10px;
+            border-bottom:1px solid #eee;
+        }
+
+        .checkbox-area{
+            margin-top:20px;
+        }
+
+        .checkbox-area label{
+            display:block;
+            margin:12px 0;
+            font-size:17px;
+        }
+
+        input[type="checkbox"]{
+            margin-right:10px;
+            transform:scale(1.2);
+        }
+
+        .total-box{
+            background:#e8f5e9;
+            padding:15px;
+            border-radius:10px;
+            margin-top:20px;
+            text-align:center;
+        }
+
+        .total-box h3{
+            color:#1b5e20;
+            font-size:28px;
+        }
+
+        select{
+            width:100%;
+            padding:12px;
+            border-radius:8px;
+            border:1px solid #ccc;
+            margin-top:15px;
+            font-size:16px;
+        }
+
+        .pay-btn{
+            width:100%;
+            padding:14px;
+            margin-top:20px;
+            background:#2e7d32;
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+        .pay-btn:hover{
+            background:#1b5e20;
+        }
+
+        .status{
+            margin-top:20px;
+            background:#d4edda;
+            color:#155724;
+            padding:12px;
+            border-radius:8px;
+            display:none;
+            text-align:center;
+            font-weight:bold;
+        }
+
+        .back-btn{
+            width:100%;
+            padding:12px;
+            margin-top:15px;
+            background:#555;
+            color:white;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+        }
+
+        .back-btn:hover{
+            background:#333;
+        }
+
+        #qrSection{
+            display:none;
+            text-align:center;
+            margin-top:20px;
+        }
+
+        #qrSection img{
+            border-radius:10px;
+            border:2px solid #ddd;
+        }
+
+        .summary-box{
+            margin-top:20px;
+            background:#f8f9fa;
+            padding:18px;
+            border-radius:12px;
+            border:1px solid #ddd;
+        }
+
+        .summary-box h3{
+            color:#2e7d32;
+            margin-bottom:15px;
+        }
+
+        .summary-item{
+            display:flex;
+            justify-content:space-between;
+            margin:10px 0;
+            font-size:16px;
+        }
+
+        .summary-total{
+            display:flex;
+            justify-content:space-between;
+            margin-top:15px;
+            font-size:20px;
+            font-weight:bold;
+            color:#1b5e20;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- HEADER -->
+    <div class="top-box">
+
+        <div>
+
+            <h1>🍽️ Meal Payment Dashboard</h1>
+
+            <p>
+                Welcome,
+                <span id="username"></span>
+            </p>
+
+        </div>
+
+        <div>
+
+            <h2 id="day"></h2>
+
+        </div>
+
+    </div>
+
+    <!-- CARDS -->
+    <div class="card-container">
+
+        <!-- MENU CARD -->
+        <div class="card">
+
+            <h2>📋 Today's Menu</h2>
+
+            <div class="meal-item">
+                <span>🍳 Breakfast</span>
+                <span id="breakfast"></span>
+            </div>
+
+            <div class="meal-item">
+                <span>🍛 Lunch</span>
+                <span id="lunch"></span>
+            </div>
+
+            <div class="meal-item">
+                <span>🌙 Dinner</span>
+                <span id="dinner"></span>
+            </div>
+
+            <!-- SELECT MEALS -->
+            <div class="checkbox-area">
+
+                <h3>Select Meals</h3>
+
+                <label>
+                    <input type="checkbox"
+                        id="breakfastCheck"
+                        onchange="calculateTotal()">
+                    Breakfast
+                </label>
+
+                <label>
+                    <input type="checkbox"
+                        id="lunchCheck"
+                        onchange="calculateTotal()">
+                    Lunch
+                </label>
+
+                <label>
+                    <input type="checkbox"
+                        id="dinnerCheck"
+                        onchange="calculateTotal()">
+                    Dinner
+                </label>
+
+            </div>
+
+            <!-- TOTAL -->
+            <div class="total-box">
+
+                <p>Total Amount</p>
+
+                <h3 id="total">₹0</h3>
+
+            </div>
+
+        </div>
+
+        <!-- PAYMENT CARD -->
+        <div class="card">
+
+            <h2>💳 Payment Section</h2>
+
+            <label>Select Payment Method</label>
+
+            <select id="method"
+                onchange="showQR()">
+
+                <option>UPI</option>
+                <option>Google Pay</option>
+                <option selected>PhonePe</option>
+                <option>Debit Card</option>
+                <option>Cash</option>
+
+            </select>
+
+                
+
+                
+                <p style="margin-top:15px;
+                    font-size:18px;">
+
+                    Amount:
+                    <strong id="qrAmount">₹0</strong>
+
+                </p>
+
+            </div>
+
+            <!-- PAYMENT SUMMARY -->
+            <div class="summary-box">
+
+                <h3>🧾 Payment Summary</h3>
+
+                <div class="summary-item">
+                    <span>Selected Meals</span>
+                    <span id="summaryMeals">None</span>
+                </div>
+
+                <div class="summary-item">
+                    <span>Payment Method</span>
+                    <span id="summaryMethod">
+                        PhonePe
+                    </span>
+                </div>
+
+                <div class="summary-item">
+                    <span>Date</span>
+                    <span id="summaryDate"></span>
+                </div>
+
+                <hr>
+
+                <div class="summary-total">
+
+                    <span>Total Amount</span>
+
+                    <span id="summaryTotal">
+                        ₹0
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <button class="pay-btn"
+                onclick="payNow()">
+
+                Pay Now
+
+            </button>
+
+            <!-- STATUS -->
+            <div class="status"
+                id="status"></div>
+
+            <!-- BACK -->
+            <button class="back-btn"
+                onclick="window.location.href='dashboard.html'">
+
+                ⬅ Back
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // USERNAME
+    const username =
+        localStorage.getItem("username")
+        || "Student";
+
+    document.getElementById("username")
+        .innerText = username;
+
+    // CURRENT DAY
+    const today =
+        new Date().toLocaleDateString(
+            'en-US',
+            {
+                weekday:'long'
+            }
+        );
+
+    document.getElementById("day")
+        .innerText = today;
+
+    // DATE
+    const currentDate =
+        new Date().toLocaleDateString();
+
+    document.getElementById("summaryDate")
+        .innerText = currentDate;
+
+    // MENU
+    const menu = {
+
+        Monday:{
+            breakfast:{item:"Idli",price:30},
+            lunch:{item:"Veg Meals",price:80},
+            dinner:{item:"Chapati Dhal",price:60}
+        },
+
+        Tuesday:{
+            breakfast:{item:"Dosa",price:40},
+            lunch:{item:"Biryani",price:100},
+            dinner:{item:"Egg Rice",price:70}
+        },
+
+        Wednesday:{
+            breakfast:{item:"Upma",price:25},
+            lunch:{item:"Fried Rice",price:90},
+            dinner:{item:"Roti Meal",price:60}
+        },
+
+        Thursday:{
+            breakfast:{item:"Poori",price:35},
+            lunch:{item:"Pulao",price:85},
+            dinner:{item:"Veg Meals",price:70}
+        },
+
+        Friday:{
+            breakfast:{item:"Puliyogare",price:30},
+            lunch:{item:"Curd Rice",price:70},
+            dinner:{item:"Rice & Curry",price:60}
+        },
+
+        Saturday:{
+            breakfast:{item:"Uttapam",price:40},
+            lunch:{item:"Chapati Meal",price:90},
+            dinner:{item:"Egg Burji",price:80}
+        },
+
+        Sunday:{
+            breakfast:{item:"Noodles",price:50},
+            lunch:{item:"Special Biryani",price:120},
+            dinner:{item:"Ragi Mudde",price:70}
+        }
+
+    };
+
+    // TODAY MENU
+    const todayMenu = menu[today];
+
+    document.getElementById("breakfast")
+        .innerText =
+        todayMenu.breakfast.item +
+        " - ₹" +
+        todayMenu.breakfast.price;
+
+    document.getElementById("lunch")
+        .innerText =
+        todayMenu.lunch.item +
+        " - ₹" +
+        todayMenu.lunch.price;
+
+    document.getElementById("dinner")
+        .innerText =
+        todayMenu.dinner.item +
+        " - ₹" +
+        todayMenu.dinner.price;
+
+    // CALCULATE TOTAL
+    function calculateTotal(){
+
+        let total = 0;
+
+        let meals = [];
+
+        if(document.getElementById(
+            "breakfastCheck").checked){
+
+            total +=
+                todayMenu.breakfast.price;
+
+            meals.push("Breakfast");
+        }
+
+        if(document.getElementById(
+            "lunchCheck").checked){
+
+            total +=
+                todayMenu.lunch.price;
+
+            meals.push("Lunch");
+        }
+
+        if(document.getElementById(
+            "dinnerCheck").checked){
+
+            total +=
+                todayMenu.dinner.price;
+
+            meals.push("Dinner");
+        }
+
+        document.getElementById("total")
+            .innerText = "₹" + total;
+
+        document.getElementById("qrAmount")
+            .innerText = "₹" + total;
+
+        document.getElementById("summaryMeals")
+            .innerText =
+            meals.length > 0
+            ? meals.join(", ")
+            : "None";
+
+        document.getElementById("summaryTotal")
+            .innerText = "₹" + total;
+    }
+
+    // SHOW QR
+    function showQR(){
+
+        const method =
+            document.getElementById("method")
+            .value;
+
+        document.getElementById(
+            "summaryMethod")
+            .innerText = method;
+
+        const qrSection =
+            document.getElementById(
+                "qrSection"
+            );
+
+        if(method === "PhonePe" ||
+           method === "Google Pay" ||
+           method === "UPI"){
+
+            qrSection.style.display =
+                "block";
+        }
+
+        else{
+
+            qrSection.style.display =
+                "none";
+        }
+    }
+
+    // PAYMENT
+    function payNow(){
+
+        let selectedMeals = [];
+
+        let total = 0;
+
+        if(document.getElementById(
+            "breakfastCheck").checked){
+
+            selectedMeals.push(
+                "Breakfast"
+            );
+
+            total +=
+                todayMenu.breakfast.price;
+        }
+
+        if(document.getElementById(
+            "lunchCheck").checked){
+
+            selectedMeals.push(
+                "Lunch"
+            );
+
+            total +=
+                todayMenu.lunch.price;
+        }
+
+        if(document.getElementById(
+            "dinnerCheck").checked){
+
+            selectedMeals.push(
+                "Dinner"
+            );
+
+            total +=
+                todayMenu.dinner.price;
+        }
+
+        if(total === 0){
+
+            alert(
+                "Please select at least one meal"
+            );
+
+            return;
+        }
+
+        const method =
+            document.getElementById(
+                "method"
+            ).value;
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+        status.style.display =
+            "block";
+
+        status.innerHTML =
+
+            "✅ Payment Successful <br><br>" +
+
+            "Meals: " +
+            selectedMeals.join(", ") +
+
+            "<br><br>Total Paid: ₹" +
+            total +
+
+            "<br><br>Method: " +
+            method;
+
+        localStorage.setItem(
+            "paymentStatus",
+            "Paid"
+        );
+
+    }
+
+    // SHOW QR ON PAGE LOAD
+    showQR();
+
+</script>
+
+</body>
+</html>
